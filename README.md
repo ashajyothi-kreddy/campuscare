@@ -41,3 +41,6 @@ The backend functionality was tested using AWS Lambda test events and API reques
 - Complaint tracking for users
 - Enhanced administrative reporting
 
+## 🏗️ AWS Architecture
+
+![CampusCare AWS Architecture](1000060175.png)
