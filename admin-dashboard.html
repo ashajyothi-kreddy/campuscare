@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard - CampusCare</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .admin-dashboard {
+            padding: 120px 7% 60px;
+        }
+
+        .admin-header {
+            margin-bottom: 30px;
+        }
+
+        .admin-header h1 {
+            margin-bottom: 8px;
+        }
+
+        .admin-header p {
+            color: #666;
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+
+        .filters input,
+        .filters select {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .filters input {
+            width: 280px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            background: white;
+            border-radius: 12px;
+            padding: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            white-space: nowrap;
+        }
+
+        th {
+            font-weight: 600;
+        }
+
+        .view-btn {
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            background: #111827;
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 550px;
+            border-radius: 15px;
+            padding: 30px;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+        }
+
+        .detail {
+            margin-bottom: 12px;
+        }
+
+        .detail strong {
+            display: inline-block;
+            width: 130px;
+        }
+
+        .modal-content select,
+        .modal-content textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border: 1px solid #ddd;
+            border-radius: 7px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .save-btn,
+        .close-btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .save-btn {
+            background: #111827;
+            color: white;
+        }
+
+        .close-btn {
+            background: #ddd;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+
+        <div class="logo">
+            CampusCare
+        </div>
+
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="admin-dashboard.html">Admin Dashboard</a>
+            <a href="login.html">Logout</a>
+        </div>
+
+    </nav>
+
+
+    <!-- ADMIN DASHBOARD -->
+    <section class="admin-dashboard">
+
+        <div class="admin-header">
+
+            <h1>Admin Dashboard</h1>
+
+            <p>
+                Manage and resolve student complaints.
+            </p>
+
+        </div>
+
+
+        <!-- STATISTICS -->
+
+        <div class="stats-container">
+
+            <div class="stat-card">
+                <h3 id="totalComplaints">0</h3>
+                <p>Total Complaints</p>
+            </div>
+
+            <div class="stat-card">
+                <h3 id="pendingComplaints">0</h3>
+                <p>Pending</p>
+            </div>
+
+            <div class="stat-card">
+                <h3 id="progressComplaints">0</h3>
+                <p>In Progress</p>
+            </div>
+
+            <div class="stat-card">
+                <h3 id="resolvedComplaints">0</h3>
+                <p>Resolved</p>
+            </div>
+
+        </div>
+
+
+        <!-- SEARCH AND FILTER -->
+
+        <div class="filters">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search complaint..."
+                onkeyup="filterComplaints()"
+            >
+
+            <select
+                id="statusFilter"
+                onchange="filterComplaints()"
+            >
+
+                <option value="All">
+                    All Status
+                </option>
+
+                <option value="Pending">
+                    Pending
+                </option>
+
+                <option value="In Progress">
+                    In Progress
+                </option>
+
+                <option value="Resolved">
+                    Resolved
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- COMPLAINT TABLE -->
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Complaint ID</th>
+                        <th>Student ID</th>
+                        <th>Category</th>
+                        <th>Title</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="complaintsTable">
+
+                    <tr>
+
+                        <td colspan="8">
+                            Loading complaints...
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- COMPLAINT DETAILS MODAL -->
+
+    <div
+        class="modal"
+        id="complaintModal"
+    >
+
+        <div class="modal-content">
+
+            <h2>
+                Complaint Details
+            </h2>
+
+
+            <div class="detail">
+                <strong>Complaint ID:</strong>
+                <span id="modalComplaintID"></span>
+            </div>
+
+
+            <div class="detail">
+                <strong>Student ID:</strong>
+                <span id="modalStudentID"></span>
+            </div>
+
+
+            <div class="detail">
+                <strong>Student Name:</strong>
+                <span id="modalStudentName"></span>
+            </div>
+
+
+            <div class="detail">
+                <strong>Category:</strong>
+                <span id="modalCategory"></span>
+            </div>
+
+
+            <div class="detail">
+                <strong>Title:</strong>
+                <span id="modalTitle"></span>
+            </div>
+
+
+            <div class="detail">
+                <strong>Description:</strong>
+                <span id="modalDescription"></span>
+            </div>
+
+
+            <label>
+
+                <strong>Status</strong>
+
+                <select id="modalStatus">
+
+                    <option value="Pending">
+                        Pending
+                    </option>
+
+                    <option value="In Progress">
+                        In Progress
+                    </option>
+
+                    <option value="Resolved">
+                        Resolved
+                    </option>
+
+                </select>
+
+            </label>
+
+
+            <br>
+            <br>
+
+
+            <label>
+
+                <strong>Admin Remarks</strong>
+
+                <textarea
+                    id="modalRemarks"
+                    rows="4"
+                    placeholder="Enter resolution remarks..."
+                ></textarea>
+
+            </label>
+
+
+            <div class="modal-buttons">
+
+                <button
+                    class="save-btn"
+                    onclick="updateComplaint()"
+                >
+                    Save Changes
+                </button>
+
+                <button
+                    class="close-btn"
+                    onclick="closeModal()"
+                >
+                    Close
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- JAVASCRIPT -->
+
+    <script>
+
+        const API_URL =
+            "https://km5pnp8l81.execute-api.ap-southeast-2.amazonaws.com/complaints";
+
+
+        let complaints = [];
+
+        let selectedComplaint = null;
+
+
+        // LOAD COMPLAINTS
+
+        async function loadComplaints() {
+
+            try {
+
+                const response =
+                    await fetch(API_URL);
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Failed to load complaints"
+                    );
+
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                complaints =
+                    data.complaints || [];
+
+
+                updateStatistics();
+
+                displayComplaints(
+                    complaints
+                );
+
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+                document.getElementById(
+                    "complaintsTable"
+                ).innerHTML =
+
+                    `<tr>
+                        <td colspan="8">
+                            Unable to load complaints.
+                        </td>
+                    </tr>`;
+
+            }
+
+        }
+
+
+        // UPDATE STATISTICS
+
+        function updateStatistics() {
+
+            document.getElementById(
+                "totalComplaints"
+            ).textContent =
+                complaints.length;
+
+
+            document.getElementById(
+                "pendingComplaints"
+            ).textContent =
+
+                complaints.filter(
+                    c => c.Status === "Pending"
+                ).length;
+
+
+            document.getElementById(
+                "progressComplaints"
+            ).textContent =
+
+                complaints.filter(
+                    c => c.Status === "In Progress"
+                ).length;
+
+
+            document.getElementById(
+                "resolvedComplaints"
+            ).textContent =
+
+                complaints.filter(
+                    c => c.Status === "Resolved"
+                ).length;
+
+        }
+
+
+        // DISPLAY COMPLAINTS
+
+        function displayComplaints(list) {
+
+            const table =
+                document.getElementById(
+                    "complaintsTable"
+                );
+
+
+            table.innerHTML = "";
+
+
+            if (list.length === 0) {
+
+                table.innerHTML =
+
+                    `<tr>
+                        <td colspan="8">
+                            No complaints found.
+                        </td>
+                    </tr>`;
+
+                return;
+
+            }
+
+
+            list.forEach(
+                complaint => {
+
+                    const row =
+                        document.createElement("tr");
+
+
+                    row.innerHTML = `
+
+                        <td>
+                            ${complaint.ComplaintID || "-"}
+                        </td>
+
+                        <td>
+                            ${complaint.StudentID || "-"}
+                        </td>
+
+                        <td>
+                            ${complaint.Category || "-"}
+                        </td>
+
+                        <td>
+                            ${complaint.Title || "-"}
+                        </td>
+
+                        <td>
+                            ${complaint.Priority || "-"}
+                        </td>
+
+                        <td>
+                            ${complaint.Status || "-"}
+                        </td>
+
+                        <td>
+                            ${complaint.Date || "-"}
+                        </td>
+
+                        <td>
+
+                            <button
+                                class="view-btn"
+                                onclick="openComplaint('${complaint.ComplaintID}')"
+                            >
+                                View
+                            </button>
+
+                        </td>
+
+                    `;
+
+
+                    table.appendChild(row);
+
+                }
+            );
+
+        }
+
+
+        // SEARCH AND FILTER
+
+        function filterComplaints() {
+
+            const search =
+                document.getElementById(
+                    "searchInput"
+                ).value.toLowerCase();
+
+
+            const status =
+                document.getElementById(
+                    "statusFilter"
+                ).value;
+
+
+            const filtered =
+                complaints.filter(
+                    complaint => {
+
+                        const matchesSearch =
+
+                            (complaint.ComplaintID || "")
+                                .toLowerCase()
+                                .includes(search)
+
+                            ||
+
+                            (complaint.StudentID || "")
+                                .toLowerCase()
+                                .includes(search)
+
+                            ||
+
+                            (complaint.Title || "")
+                                .toLowerCase()
+                                .includes(search)
+
+                            ||
+
+                            (complaint.Category || "")
+                                .toLowerCase()
+                                .includes(search);
+
+
+                        const matchesStatus =
+
+                            status === "All"
+
+                            ||
+
+                            complaint.Status === status;
+
+
+                        return (
+                            matchesSearch &&
+                            matchesStatus
+                        );
+
+                    }
+                );
+
+
+            displayComplaints(
+                filtered
+            );
+
+        }
+
+
+        // OPEN COMPLAINT
+
+        function openComplaint(id) {
+
+            selectedComplaint =
+                complaints.find(
+                    complaint =>
+                        complaint.ComplaintID === id
+                );
+
+
+            if (!selectedComplaint) {
+
+                return;
+
+            }
+
+
+            document.getElementById(
+                "modalComplaintID"
+            ).textContent =
+                selectedComplaint.ComplaintID;
+
+
+            document.getElementById(
+                "modalStudentID"
+            ).textContent =
+                selectedComplaint.StudentID;
+
+
+            document.getElementById(
+                "modalStudentName"
+            ).textContent =
+                selectedComplaint.StudentName;
+
+
+            document.getElementById(
+                "modalCategory"
+            ).textContent =
+                selectedComplaint.Category;
+
+
+            document.getElementById(
+                "modalTitle"
+            ).textContent =
+                selectedComplaint.Title;
+
+
+            document.getElementById(
+                "modalDescription"
+            ).textContent =
+                selectedComplaint.Description;
+
+
+            document.getElementById(
+                "modalStatus"
+            ).value =
+                selectedComplaint.Status;
+
+
+            document.getElementById(
+                "modalRemarks"
+            ).value =
+                selectedComplaint.AdminRemarks || "";
+
+
+            document.getElementById(
+                "complaintModal"
+            ).style.display = "flex";
+
+        }
+
+
+        // CLOSE MODAL
+
+        function closeModal() {
+
+            document.getElementById(
+                "complaintModal"
+            ).style.display = "none";
+
+        }
+
+
+        // UPDATE COMPLAINT
+
+        async function updateComplaint() {
+
+            if (!selectedComplaint) {
+
+                return;
+
+            }
+
+
+            const status =
+                document.getElementById(
+                    "modalStatus"
+                ).value;
+
+
+            const remarks =
+                document.getElementById(
+                    "modalRemarks"
+                ).value;
+
+
+            try {
+
+                const response =
+
+                    await fetch(
+                        API_URL +
+                        "/" +
+                        selectedComplaint.ComplaintID,
+
+                        {
+
+                            method: "PUT",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    Status:
+                                        status,
+
+                                    AdminRemarks:
+                                        remarks
+
+                                })
+
+                        }
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Failed to update complaint"
+                    );
+
+                }
+
+
+                alert(
+                    "Complaint updated successfully!"
+                );
+
+
+                closeModal();
+
+
+                await loadComplaints();
+
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+                alert(
+                    "Unable to update complaint."
+                );
+
+            }
+
+        }
+
+
+        // START
+
+        loadComplaints();
+
+    </script>
+
+</body>
+
+</html>

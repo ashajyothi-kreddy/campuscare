@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Dashboard - CampusCare</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .student-dashboard {
+            padding: 120px 7% 60px;
+        }
+
+        .dashboard-header {
+            margin-bottom: 30px;
+        }
+
+        .dashboard-header h1 {
+            margin-bottom: 8px;
+        }
+
+        .dashboard-header p {
+            color: #666;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            background: white;
+            border-radius: 12px;
+            padding: 10px;
+            margin-top: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            white-space: nowrap;
+        }
+
+        th {
+            font-weight: 600;
+        }
+
+        .status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 13px;
+        }
+
+        .pending {
+            background: #fff3cd;
+        }
+
+        .progress {
+            background: #cfe2ff;
+        }
+
+        .resolved {
+            background: #d1e7dd;
+        }
+
+        .submit-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 20px;
+            background: #111827;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            CampusCare
+        </div>
+
+        <div class="nav-links">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="student-dashboard.html">
+                Dashboard
+            </a>
+
+            <a href="submit-complaint.html">
+                Submit Complaint
+            </a>
+
+            <a href="login.html">
+                Logout
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- DASHBOARD -->
+
+    <section class="student-dashboard">
+
+        <div class="dashboard-header">
+
+            <h1>
+                Student Dashboard
+            </h1>
+
+            <p>
+                Track your complaints and their current status.
+            </p>
+
+            <a
+                href="submit-complaint.html"
+                class="submit-btn"
+            >
+                + Submit New Complaint
+            </a>
+
+        </div>
+
+
+        <!-- STATISTICS -->
+
+        <div class="stats-container">
+
+            <div class="stat-card">
+
+                <h3 id="totalComplaints">
+                    0
+                </h3>
+
+                <p>
+                    Total Complaints
+                </p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <h3 id="pendingComplaints">
+                    0
+                </h3>
+
+                <p>
+                    Pending
+                </p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <h3 id="progressComplaints">
+                    0
+                </h3>
+
+                <p>
+                    In Progress
+                </p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <h3 id="resolvedComplaints">
+                    0
+                </h3>
+
+                <p>
+                    Resolved
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- COMPLAINTS -->
+
+        <h2 style="margin-top: 40px;">
+            My Complaints
+        </h2>
+
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Complaint ID
+                        </th>
+
+                        <th>
+                            Category
+                        </th>
+
+                        <th>
+                            Title
+                        </th>
+
+                        <th>
+                            Priority
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Date
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="complaintsTable">
+
+                    <tr>
+
+                        <td colspan="6">
+                            Loading complaints...
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <script>
+
+        const API_URL =
+            "https://km5pnp8l81.execute-api.ap-southeast-2.amazonaws.com/complaints";
+
+
+        let complaints = [];
+
+
+        // LOAD COMPLAINTS
+
+        async function loadComplaints() {
+
+            try {
+
+                const response =
+                    await fetch(API_URL);
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Failed to load complaints"
+                    );
+
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                complaints =
+                    data.complaints || [];
+
+
+                updateStatistics();
+
+                displayComplaints(
+                    complaints
+                );
+
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+                document.getElementById(
+                    "complaintsTable"
+                ).innerHTML =
+
+                    `<tr>
+                        <td colspan="6">
+                            Unable to load complaints.
+                        </td>
+                    </tr>`;
+
+            }
+
+        }
+
+
+        // STATISTICS
+
+        function updateStatistics() {
+
+            document.getElementById(
+                "totalComplaints"
+            ).textContent =
+                complaints.length;
+
+
+            document.getElementById(
+                "pendingComplaints"
+            ).textContent =
+
+                complaints.filter(
+                    c => c.Status === "Pending"
+                ).length;
+
+
+            document.getElementById(
+                "progressComplaints"
+            ).textContent =
+
+                complaints.filter(
+                    c => c.Status === "In Progress"
+                ).length;
+
+
+            document.getElementById(
+                "resolvedComplaints"
+            ).textContent =
+
+                complaints.filter(
+                    c => c.Status === "Resolved"
+                ).length;
+
+        }
+
+
+        // DISPLAY COMPLAINTS
+
+        function displayComplaints(list) {
+
+            const table =
+                document.getElementById(
+                    "complaintsTable"
+                );
+
+
+            table.innerHTML = "";
+
+
+            if (list.length === 0) {
+
+                table.innerHTML =
+
+                    `<tr>
+                        <td colspan="6">
+                            No complaints found.
+                        </td>
+                    </tr>`;
+
+                return;
+
+            }
+
+
+            list.forEach(
+                complaint => {
+
+                    let statusClass = "pending";
+
+
+                    if (
+                        complaint.Status ===
+                        "In Progress"
+                    ) {
+
+                        statusClass = "progress";
+
+                    }
+
+
+                    if (
+                        complaint.Status ===
+                        "Resolved"
+                    ) {
+
+                        statusClass = "resolved";
+
+                    }
+
+
+                    const row =
+                        document.createElement("tr");
+
+
+                    row.innerHTML = `
+
+                        <td>
+                            ${complaint.ComplaintID || "-"}
+                        </td>
+
+                        <td>
+                            ${complaint.Category || "-"}
+                        </td>
+
+                        <td>
+                            ${complaint.Title || "-"}
+                        </td>
+
+                        <td>
+                            ${complaint.Priority || "-"}
+                        </td>
+
+                        <td>
+
+                            <span class="status ${statusClass}">
+
+                                ${complaint.Status || "-"}
+
+                            </span>
+
+                        </td>
+
+                        <td>
+                            ${complaint.Date || "-"}
+                        </td>
+
+                    `;
+
+
+                    table.appendChild(row);
+
+                }
+            );
+
+        }
+
+
+        loadComplaints();
+
+    </script>
+
+</body>
+
+</html>

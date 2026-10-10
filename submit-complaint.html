@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Submit Complaint - CampusCare</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        /* Page background */
+        body {
+            background: #f5f7fb;
+            margin: 0;
+        }
+
+        /* Complaint section */
+        .complaint-section {
+            padding: 120px 20px 60px;
+            min-height: 100vh;
+        }
+
+        .complaint-container {
+            max-width: 850px;
+            margin: auto;
+        }
+
+        .complaint-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .complaint-header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .complaint-header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        /* Form card */
+        .complaint-card {
+            background: white;
+            padding: 35px;
+            border-radius: 18px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 13px 15px;
+            border: 1px solid #d8dce5;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #5b5bf7;
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        /* Two columns */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* Priority */
+        .priority-options {
+            display: flex;
+            gap: 25px;
+            margin-top: 10px;
+        }
+
+        .priority-options label {
+            font-weight: normal;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            cursor: pointer;
+        }
+
+        .priority-options input {
+            width: auto;
+        }
+
+        /* Buttons */
+        .form-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 13px 25px;
+            border-radius: 10px;
+            border: none;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-cancel {
+            background: #e9ecf2;
+            color: #333;
+        }
+
+        .btn-submit {
+            background: #5b5bf7;
+            color: white;
+        }
+
+        .btn-submit:hover {
+            opacity: 0.9;
+        }
+
+        /* Loading */
+        .loading {
+            display: none;
+            margin-top: 15px;
+            text-align: center;
+            color: #555;
+        }
+
+        /* Mobile */
+        @media (max-width: 700px) {
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .complaint-card {
+                padding: 22px;
+            }
+
+            .complaint-header h1 {
+                font-size: 28px;
+            }
+
+            .priority-options {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .form-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+
+        <div class="logo">
+            CampusCare
+        </div>
+
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="student-dashboard.html">Dashboard</a>
+        </div>
+
+    </nav>
+
+
+    <!-- Complaint Section -->
+    <section class="complaint-section">
+
+        <div class="complaint-container">
+
+            <div class="complaint-header">
+
+                <h1>Submit a Complaint</h1>
+
+                <p>
+                    Tell us about the issue and we will work towards resolving it.
+                </p>
+
+            </div>
+
+
+            <div class="complaint-card">
+
+                <form id="complaintForm">
+
+                    <!-- Student Information -->
+                    <div class="form-row">
+
+                        <div class="form-group">
+
+                            <label for="studentId">
+                                Student ID
+                            </label>
+
+                            <input
+                                type="text"
+                                id="studentId"
+                                placeholder="Enter Student ID"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="studentName">
+                                Student Name
+                            </label>
+
+                            <input
+                                type="text"
+                                id="studentName"
+                                placeholder="Enter Student Name"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Category -->
+                    <div class="form-group">
+
+                        <label for="category">
+                            Complaint Category
+                        </label>
+
+                        <select id="category" required>
+
+                            <option value="">
+                                Select Category
+                            </option>
+
+                            <option value="Hostel">
+                                Hostel
+                            </option>
+
+                            <option value="Academics">
+                                Academics
+                            </option>
+
+                            <option value="Transport">
+                                Transport
+                            </option>
+
+                            <option value="Library">
+                                Library
+                            </option>
+
+                            <option value="Canteen">
+                                Canteen
+                            </option>
+
+                            <option value="Infrastructure">
+                                Infrastructure
+                            </option>
+
+                            <option value="Other">
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Complaint Title -->
+                    <div class="form-group">
+
+                        <label for="title">
+                            Complaint Title
+                        </label>
+
+                        <input
+                            type="text"
+                            id="title"
+                            placeholder="Enter a short title"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Description -->
+                    <div class="form-group">
+
+                        <label for="description">
+                            Description
+                        </label>
+
+                        <textarea
+                            id="description"
+                            placeholder="Describe your complaint in detail..."
+                            required
+                        ></textarea>
+
+                    </div>
+
+
+                    <!-- Priority -->
+                    <div class="form-group">
+
+                        <label>
+                            Priority
+                        </label>
+
+                        <div class="priority-options">
+
+                            <label>
+                                <input
+                                    type="radio"
+                                    name="priority"
+                                    value="Low"
+                                >
+                                Low
+                            </label>
+
+                            <label>
+                                <input
+                                    type="radio"
+                                    name="priority"
+                                    value="Medium"
+                                    checked
+                                >
+                                Medium
+                            </label>
+
+                            <label>
+                                <input
+                                    type="radio"
+                                    name="priority"
+                                    value="High"
+                                >
+                                High
+                            </label>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Buttons -->
+                    <div class="form-buttons">
+
+                        <button
+                            type="button"
+                            class="btn btn-cancel"
+                            onclick="window.location.href='student-dashboard.html'">
+                            Cancel
+                        </button>
+
+                        <button
+                            type="submit"
+                            class="btn btn-submit"
+                            id="submitButton">
+                            Submit Complaint
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        class="loading"
+                        id="loadingMessage">
+                        Submitting complaint...
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- AWS API Connection -->
+    <script>
+
+        // Your API Gateway URL
+        const API_URL =
+            "https://km5pnp8l81.execute-api.ap-southeast-2.amazonaws.com/complaints";
+
+
+        // Complaint form
+        document
+            .getElementById("complaintForm")
+            .addEventListener("submit", async function (event) {
+
+                // Stop normal form submission
+                event.preventDefault();
+
+
+                // Get selected priority
+                const selectedPriority =
+                    document.querySelector(
+                        'input[name="priority"]:checked'
+                    );
+
+
+                // Check priority
+                if (!selectedPriority) {
+
+                    alert("Please select a priority.");
+
+                    return;
+                }
+
+
+                // Collect form data
+                const complaintData = {
+
+                    StudentID:
+                        document.getElementById("studentId").value.trim(),
+
+                    StudentName:
+                        document.getElementById("studentName").value.trim(),
+
+                    Category:
+                        document.getElementById("category").value,
+
+                    Title:
+                        document.getElementById("title").value.trim(),
+
+                    Description:
+                        document.getElementById("description").value.trim(),
+
+                    Priority:
+                        selectedPriority.value
+                };
+
+
+                // Show loading
+                document.getElementById("loadingMessage").style.display =
+                    "block";
+
+                document.getElementById("submitButton").disabled =
+                    true;
+
+
+                try {
+
+                    // Send data to API Gateway
+                    const response = await fetch(
+                        API_URL,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+
+                            body: JSON.stringify(complaintData)
+                        }
+                    );
+
+
+                    // Convert response to JSON
+                    const result = await response.json();
+
+
+                    console.log("AWS Response:", result);
+
+
+                    // Successful response
+                    if (response.ok) {
+
+                        alert(
+                            "Complaint submitted successfully!\n\n" +
+                            "Complaint ID: " +
+                            result.ComplaintID
+                        );
+
+
+                        // Go back to dashboard
+                        window.location.href =
+                            "student-dashboard.html";
+
+                    }
+
+                    // Error response
+                    else {
+
+                        alert(
+                            "Failed to submit complaint.\n\n" +
+                            (result.message || "Unknown error")
+                        );
+
+                    }
+
+                }
+
+                catch (error) {
+
+                    console.error(
+                        "API Error:",
+                        error
+                    );
+
+
+                    alert(
+                        "Unable to connect to CampusCare server.\n\n" +
+                        "Please check your internet connection and try again."
+                    );
+
+                }
+
+
+                finally {
+
+                    // Hide loading
+                    document.getElementById("loadingMessage").style.display =
+                        "none";
+
+
+                    // Enable button
+                    document.getElementById("submitButton").disabled =
+                        false;
+
+                }
+
+            });
+
+    </script>
+
+</body>
+
+</html>

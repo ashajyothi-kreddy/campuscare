@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login - CampusCare</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="login-page">
+
+        <div class="login-box">
+
+            <div class="login-logo">
+                Campus<span>Care</span>
+            </div>
+
+            <p class="login-tag">COLLEGE COMPLAINT MANAGEMENT</p>
+
+            <h1>Welcome Back 👋</h1>
+
+            <p class="login-description">
+                Login to submit and track your complaints.
+            </p>
+
+
+            <!-- Login Type -->
+
+            <div class="login-type">
+
+                <button class="type-btn active" onclick="selectRole('student', this)">
+                    Student
+                </button>
+
+                <button class="type-btn" onclick="selectRole('admin', this)">
+                    Admin
+                </button>
+
+            </div>
+
+
+            <!-- Login Form -->
+
+            <form id="loginForm">
+
+                <label>Email / Student ID</label>
+
+                <input
+                    type="text"
+                    id="username"
+                    placeholder="Enter your ID"
+                    required
+                >
+
+
+                <label>Password</label>
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Enter your password"
+                    required
+                >
+
+
+                <button type="submit" class="login-submit">
+                    Login
+                </button>
+
+            </form>
+
+
+            <p class="back-home">
+                <a href="index.html">← Back to Home</a>
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        let selectedRole = "student";
+
+
+        function selectRole(role, button) {
+
+            selectedRole = role;
+
+            document.querySelectorAll(".type-btn")
+                .forEach(btn => btn.classList.remove("active"));
+
+            button.classList.add("active");
+
+        }
+
+
+        document.getElementById("loginForm")
+            .addEventListener("submit", function(event) {
+
+                event.preventDefault();
+
+                const username =
+                    document.getElementById("username").value;
+
+                const password =
+                    document.getElementById("password").value;
+
+
+                if (username === "" || password === "") {
+
+                    alert("Please enter all details.");
+
+                    return;
+                }
+
+
+                if (selectedRole === "student") {
+
+                    alert("Student login successful!");
+
+                    window.location.href =
+                        "student-dashboard.html";
+
+                } else {
+
+                    alert("Admin login successful!");
+
+                    window.location.href =
+                        "admin-dashboard.html";
+
+                }
+
+            });
+
+    </script>
+
+</body>
+
+</html>
+```
